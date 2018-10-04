@@ -1,12 +1,17 @@
 <template>
-<b-list-group-item active>Task</b-list-group-item>
+<b-list-group-item active>{{ task.name }}</b-list-group-item>
 </template>
 
 <script>
 export default {
-    name: "ShowTask",
-    components: {
+  name: 'ShowTask',
+  components: {},
+  props: {
+    task: {
+      type: Object,
+      required: true
     }
+  }
 }
 </script>
 

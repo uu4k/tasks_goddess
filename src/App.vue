@@ -3,10 +3,9 @@
     <b-button size="lg" @click="signin" v-if="!user.uid">sign in</b-button>
     <b-button size="lg" @click="signout" v-if="user.uid">sign out</b-button>
     <div id="firebaseui-auth-container"></div>
-    <div id="loader">Loading...</div>
     <add-task/>
     <show-goddess/>
-    <show-tasks/>
+    <show-tasks :tasks="tasks" />
   </div>
 </template>
 
@@ -18,31 +17,34 @@ import AddTask from '@/components/AddTask'
 import ShowGoddess from '@/components/ShowGoddess'
 import ShowTasks from '@/components/ShowTasks'
 
-import { mapState, mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'App',
-  data () {
-    return {
-    }
+  data() {
+    return {}
   },
   components: {
     AddTask,
     ShowGoddess,
     ShowTasks
   },
-  created () {
-    console.log(this.$store.state.db)
-
-    this.$store.dispatch('initAuth')
+  created() {
+    this.initAuth()
   },
   methods: {
-    ...mapActions(['signin', 'signout'])
+    ...mapActions({
+      signin: 'user/signin', 
+      signout: 'user/signout', 
+      initAuth: 'user/initAuth'
+    })
   },
   computed: {
-    localComputed() {
-    },
-    ...mapState(['user'])
+    localComputed() {},
+    ...mapGetters({
+      user: 'user/user',
+      tasks: 'user/tasks'
+    })
   }
 }
 </script>
