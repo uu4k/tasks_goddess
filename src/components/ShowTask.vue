@@ -1,5 +1,5 @@
 <template>
-<b-list-group-item active>{{ task.name }}</b-list-group-item>
+<b-list-group-item active>{{ task.name.toString() }}</b-list-group-item>
 </template>
 
 <script>

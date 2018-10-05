@@ -2,7 +2,7 @@
 <div>
     <b-list-group>
         <show-task
-        v-for="task in tasks" :task="task" :key="task.id"
+        v-for="task in tasks" :task="task" :key="task.id.toString()"
         />
     </b-list-group>
 </div>

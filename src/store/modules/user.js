@@ -1,6 +1,12 @@
 import firebase from 'firebase'
 import 'firebase/firestore'
 
+import Task from '@/store/models/task/task'
+import Name from '@/store/models/task/name'
+import StateFactory from '@/store/models/task/state/statefactory'
+import Created from '../models/task/created';
+import Id from '../models/task/id';
+
 const user = {
   namespaced: true,
   state: {
@@ -41,29 +47,62 @@ const user = {
       created,
       taskstate
     }) {
+      let addTask = new Task(
+        null,
+        new Name(name),
+        new StateFactory.stateByName(taskstate),
+        new Created(created)
+      )
+
+      // TODO refactoring
+      let addTaskData = addTask.toHash()
+      addTaskData['uid'] = state.user.uid
+
       return rootState.db
         .collection('tasks')
-        .add({
-          name: name,
-          created: created || Date.now(),
-          state: taskstate || 'todo',
-          uid: state.user.uid
-        })
+        .add(addTaskData)
     },
     async fetchTasks({
       commit,
       state,
       rootState
     }) {
+      // TODO クエリを引数で指定できるようにする
       let taskRef = rootState.db.collection('tasks').where('uid', '==', state.user.uid)
       let tasks = await taskRef.get()
 
-      tasks.forEach(task => commit('tasks/ADD_TASKS',
+      tasks.forEach(task => commit('tasks/ADD_TASK',
         task, {
           root: true
         }
       ))
-    },
+
+      rootState.db.collection('tasks').where('uid', '==', state.user.uid).onSnapshot((snapshot) => {
+        snapshot.docChanges.forEach((change) => {
+          if (change.type === "added") {
+            commit('tasks/ADD_TASK',
+              change.doc, {
+                root: true
+              }
+            )
+          }
+          if (change.type === "modified") {
+            commit('tasks/MOD_TASK',
+              change.doc, {
+                root: true
+              }
+            )
+          }
+          if (change.type === "removed") {
+            commit('tasks/DEL_TASK',
+              change.doc, {
+                root: true
+              }
+            )
+          }
+        })
+      })
+    }
   },
   getters: {
     user: state => {
