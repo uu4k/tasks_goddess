@@ -1,11 +1,10 @@
 import firebase from 'firebase'
 import 'firebase/firestore'
 
-import Task from '@/store/models/task/task'
-import Name from '@/store/models/task/name'
-import StateFactory from '@/store/models/task/state/statefactory'
-import Created from '../models/task/created';
-import Id from '../models/task/id';
+import Task from '@/models/task/task'
+import Name from '@/models/task/name'
+import StateFactory from '@/models/task/state/statefactory'
+import Created from '@/models/task/created';
 
 const user = {
   namespaced: true,
@@ -30,6 +29,7 @@ const user = {
       commit,
       dispatch
     }) {
+      // TODO データソース層として分離
       // FirebaseAuthenticationのログイン状態の変更時の処理を追加.
       // なお、ページ表示時にも動作する
       firebase.auth().onAuthStateChanged(user => {
@@ -58,6 +58,7 @@ const user = {
       let addTaskData = addTask.toHash()
       addTaskData['uid'] = state.user.uid
 
+      // TODO データソース層として分離
       return rootState.db
         .collection('tasks')
         .add(addTaskData)
@@ -67,16 +68,18 @@ const user = {
       state,
       rootState
     }) {
-      // TODO クエリを引数で指定できるようにする
+      // TODO データソース層として分離
       let taskRef = rootState.db.collection('tasks').where('uid', '==', state.user.uid)
       let tasks = await taskRef.get()
 
+      // TODO ファーストコレクションとかにできないか検討
       tasks.forEach(task => commit('tasks/ADD_TASK',
         task, {
           root: true
         }
       ))
 
+      // TODO データソース層として分離
       rootState.db.collection('tasks').where('uid', '==', state.user.uid).onSnapshot((snapshot) => {
         snapshot.docChanges.forEach((change) => {
           if (change.type === "added") {

@@ -1,8 +1,8 @@
-import Task from '@/store/models/task/task'
-import Name from '@/store/models/task/name'
-import StateFactory from '@/store/models/task/state/statefactory'
-import Created from '../models/task/created';
-import Id from '../models/task/id';
+import Task from '@/models/task/task'
+import Name from '@/models/task/name'
+import StateFactory from '@/models/task/state/statefactory'
+import Created from '@/models/task/created';
+import Id from '@/models/task/id';
 
 const tasks = {
   namespaced: true,
