@@ -1,7 +1,7 @@
 class Created {
   constructor(created) {
     // TODO validation
-    this.created = created
+    this.created = created | new Date()
   }
 
   toString() {

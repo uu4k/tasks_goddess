@@ -11,9 +11,16 @@ Vue.use(Vuex)
 import user from "@/store/modules/user"
 import tasks from "@/store/modules/tasks"
 
+
+// repository初期化
+const db = firebase.firestore()
+// TODO いい感じにDIしたい
+import TaskRepository from '@/repositories/task-repository'
+TaskRepository.init(db)
+
 export default new Vuex.Store({
   state: {
-    db: firebase.firestore(),
+    db: db,
   },
   modules: {
     user: user,

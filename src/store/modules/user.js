@@ -6,6 +6,8 @@ import Name from '@/models/task/name'
 import StateFactory from '@/models/task/state/statefactory'
 import Created from '@/models/task/created';
 
+import TaskRegistScenario from '@/scenarios/task-regist-scenario'
+
 const user = {
   namespaced: true,
   state: {
@@ -47,21 +49,13 @@ const user = {
       created,
       taskstate
     }) {
-      let addTask = new Task(
-        null,
-        new Name(name),
-        new StateFactory.stateByName(taskstate),
-        new Created(created)
+
+      TaskRegistScenario.regist(
+        state.user,
+        name,
+        taskstate,
+        created
       )
-
-      // TODO refactoring
-      let addTaskData = addTask.toHash()
-      addTaskData['uid'] = state.user.uid
-
-      // TODO データソース層として分離
-      return rootState.db
-        .collection('tasks')
-        .add(addTaskData)
     },
     async fetchTasks({
       commit,
